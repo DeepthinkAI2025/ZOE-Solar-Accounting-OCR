@@ -8,6 +8,7 @@ import { SettingsView } from './components/SettingsView';
 import { AuthView } from './components/AuthView';
 import { BackupView } from './components/BackupView';
 import { FilterBar } from './components/FilterBar';
+import { UploadArea } from './components/UploadArea';
 import { analyzeDocumentFree } from './services/freeAIService';
 import { applyAccountingRules, generateZoeInvoiceId } from './services/ruleEngine';
 import * as storageService from './services/storageService';
@@ -298,6 +299,7 @@ export default function App() {
       const timer = setTimeout(() => setNotification(null), 5000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [notification]);
 
   useEffect(() => {
@@ -305,6 +307,7 @@ export default function App() {
       const timer = setTimeout(() => setPrivateDocNotification(null), 8000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [privateDocNotification]);
 
   const startResizing = (mouseDownEvent: React.MouseEvent) => {
@@ -831,7 +834,9 @@ export default function App() {
       );
     }
     if (viewMode === 'interactions') {
-      return <MicroInteractionsDemo />;
+      return (
+        <div className="p-8 text-center text-text-muted">Interaktionsansicht in Entwicklung</div>
+      );
     }
     if (viewMode === 'database') {
       const handleExportSQLWithPreflight = async () => {
@@ -959,11 +964,11 @@ export default function App() {
           {/* Upload Area */}
           <div className="mb-8">
             <UploadArea
-              onUploadComplete={(result) => {
+              onUploadComplete={(result: unknown) => {
                 console.log('Upload complete:', result);
                 setNotification('Beleg erfolgreich verarbeitet!');
               }}
-              onUploadError={(error) => {
+              onUploadError={(error: string) => {
                 console.error('Upload error:', error);
                 setNotification(`Fehler: ${error}`);
               }}
