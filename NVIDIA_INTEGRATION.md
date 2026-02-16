@@ -1,29 +1,36 @@
-# NVIDIA Kimi K2.5 OCR Integration
+# NVIDIA NIM OCR Integration
 
 ## Übersicht
-Ab sofort verwendet ZOE Solar Accounting OCR ausschließlich die **NVIDIA API** mit **Kimi K2.5** für OCR-Operationen.
+
+Ab sofort verwendet ZOE Solar Accounting OCR ausschließlich die **NVIDIA NIM API** mit **Qwen 3** für OCR-Operationen.
 
 ## Konfiguration
 
 ### API Key
+
 Der NVIDIA API Key ist in `.env` hinterlegt:
+
 ```
-VITE_NVIDIA_API_KEY=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
+VITE_NVIDIA_API_KEY=your-nvidia-api-key
 ```
 
 ### Verwendetes Modell
-- **Modell**: `moonshotai/kimi-k2.5`
-- **Provider**: NVIDIA API (integrate.api.nvidia.com)
+
+- **Modell**: `qwen/qwen3-30b-a3b`
+- **Provider**: NVIDIA NIM (integrate.api.nvidia.com)
 - **Qualität**: Premium OCR für deutsche Rechnungen
 
 ## Deaktivierte Provider
+
 Folgende Provider wurden deaktiviert (nur NVIDIA wird verwendet):
+
 - ❌ Google Gemini
 - ❌ SiliconFlow Qwen
 - ❌ Mistral AI
 - ❌ OpenCode ZEN
 
 ## Geänderte Dateien
+
 1. `.env` - NVIDIA API Key hinzugefügt, andere Keys auskommentiert
 2. `src/services/freeAIService/config.ts` - Nur NVIDIA aktiviert
 3. `src/services/betterUploadServer.ts` - Verwendet jetzt `analyzeDocumentFree()`
@@ -33,14 +40,16 @@ Folgende Provider wurden deaktiviert (nur NVIDIA wird verwendet):
 ## Technische Details
 
 ### API-Endpunkt
+
 ```
 POST https://integrate.api.nvidia.com/v1/chat/completions
 ```
 
 ### Request Format (OpenAI-kompatibel)
+
 ```json
 {
-  "model": "moonshotai/kimi-k2.5",
+  "model": "qwen/qwen3-30b-a3b",
   "messages": [
     {
       "role": "user",
@@ -54,6 +63,7 @@ POST https://integrate.api.nvidia.com/v1/chat/completions
 ```
 
 ### Extrahierte Daten
+
 - Lieferant Name & Adresse
 - Steuernummer
 - Rechnungsnummer & Datum
@@ -63,6 +73,7 @@ POST https://integrate.api.nvidia.com/v1/chat/completions
 - Positionen (Line Items)
 
 ## Fehlerbehandlung
+
 - Timeout: 30 Sekunden
 - Max Retries: 3
 - Fallback: Keiner (nur NVIDIA)
