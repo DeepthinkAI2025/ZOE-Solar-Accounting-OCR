@@ -65,10 +65,10 @@ window.fetch = async (...args) => {
   }
 };
 
-// Register Service Worker for background sync
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker
+      .register('/service-worker.js')
       .then((registration) => {
         console.log('[SW] Registered:', registration.scope);
         analytics.track('service_worker_registered', {
@@ -77,11 +77,19 @@ if ('serviceWorker' in navigator) {
 
         // Register periodic sync if supported
         if ('periodicSync' in registration) {
-          (registration as ServiceWorkerRegistration & { periodicSync: { register: (tag: string, options: { minInterval: number }) => Promise<void> } }).periodicSync.register('content-sync', {
-            minInterval: 15 * 60 * 1000, // 15 minutes
-          }).catch(() => {
-            // Periodic sync not supported or permission denied
-          });
+          (
+            registration as ServiceWorkerRegistration & {
+              periodicSync: {
+                register: (tag: string, options: { minInterval: number }) => Promise<void>;
+              };
+            }
+          ).periodicSync
+            .register('content-sync', {
+              minInterval: 15 * 60 * 1000, // 15 minutes
+            })
+            .catch(() => {
+              // Periodic sync not supported or permission denied
+            });
         }
       })
       .catch((error) => {
@@ -125,11 +133,31 @@ function Root() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Lade ZOE Solar Accounting OCR...</p>
-            <p className="text-xs text-gray-400 mt-2">Version {envConfig.appVersion || 'dev'}</p>
+        <div
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#0A0E14',
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                border: '2px solid transparent',
+                borderTopColor: '#0066FF',
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto 16px',
+              }}
+            ></div>
+            <p style={{ color: '#E8ECF0', fontSize: '16px' }}>Lade ZOE Solar Accounting OCR...</p>
+            <p style={{ color: '#5F6775', fontSize: '12px', marginTop: '8px' }}>
+              Version {envConfig.appVersion || 'dev'}
+            </p>
           </div>
         </div>
       }

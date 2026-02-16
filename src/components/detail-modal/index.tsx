@@ -19,7 +19,7 @@ import { DetailModalActions } from './Actions';
 import { rateLimitWrapper, exportRateLimiter } from '../../services/rateLimiter';
 import { validateDocumentData } from '../../services/validation';
 import { toast } from 'react-hot-toast';
-import { generatePDFReport } from '../../services/exportService';
+import { generatePdfReport } from '../../services/exportService';
 
 interface DetailModalProps {
   document: DocumentRecord;
@@ -66,7 +66,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       // Arrow navigation
       if (e.altKey && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
         e.preventDefault();
-        const idx = allDocuments.findIndex(d => d.id === document.id);
+        const idx = allDocuments.findIndex((d) => d.id === document.id);
         if (idx < 0) return;
         const nextIndex = e.key === 'ArrowRight' ? idx + 1 : idx - 1;
         const nextDoc = allDocuments[nextIndex];
@@ -83,7 +83,11 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     if (!isOpen || !editor.settings) return;
     if (!editor.isError && !editor.isReview) return;
 
-    const required = editor.settings.ocrConfig?.required_fields || ['belegDatum', 'lieferantName', 'bruttoBetrag'];
+    const required = editor.settings.ocrConfig?.required_fields || [
+      'belegDatum',
+      'lieferantName',
+      'bruttoBetrag',
+    ];
 
     const tryFocus = (field: string): boolean => {
       if (field === 'belegDatum' && !editor.formData.belegDatum) {
@@ -122,9 +126,13 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   // Retry OCR with rate limiting
   const handleRetryOCR = async () => {
     try {
-      await rateLimitWrapper('ocr', async () => {
-        await onRetryOCR(document);
-      }, exportRateLimiter);
+      await rateLimitWrapper(
+        'ocr',
+        async () => {
+          await onRetryOCR(document);
+        },
+        exportRateLimiter
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -141,11 +149,14 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       }
 
       // Rate limit
-      await rateLimitWrapper('export', async () => {
-        await generatePDFReport([document]);
-        toast.success('PDF wurde heruntergeladen');
-      }, exportRateLimiter);
-
+      await rateLimitWrapper(
+        'export',
+        async () => {
+          await generatePdfReport([document]);
+          toast.success('PDF wurde heruntergeladen');
+        },
+        exportRateLimiter
+      );
     } catch (error: any) {
       toast.error(error.message || 'Export fehlgeschlagen');
     }
@@ -186,9 +197,11 @@ export const DetailModal: React.FC<DetailModalProps> = ({
         {/* Content - Split View for Desktop, Tabs for Mobile */}
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
           {/* Document Preview */}
-          <div className={`flex-1 overflow-hidden md:border-r ${
-            mobileTab === 'preview' ? 'flex' : 'hidden md:flex'
-          }`}>
+          <div
+            className={`flex-1 overflow-hidden md:border-r ${
+              mobileTab === 'preview' ? 'flex' : 'hidden md:flex'
+            }`}
+          >
             <DocumentView
               viewUrl={editor.viewUrl}
               viewType={editor.viewType}
@@ -200,9 +213,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           </div>
 
           {/* Editor */}
-          <div className={`flex-1 overflow-hidden ${
-            mobileTab === 'data' ? 'flex' : 'hidden md:flex'
-          }`}>
+          <div
+            className={`flex-1 overflow-hidden ${mobileTab === 'data' ? 'flex' : 'hidden md:flex'}`}
+          >
             <EditorView
               formData={editor.formData}
               settings={editor.settings}
@@ -224,9 +237,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           <button
             onClick={() => setMobileTab('preview')}
             className={`flex-1 py-2 text-sm font-medium ${
-              mobileTab === 'preview'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600'
+              mobileTab === 'preview' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
             }`}
           >
             Vorschau
@@ -234,9 +245,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           <button
             onClick={() => setMobileTab('data')}
             className={`flex-1 py-2 text-sm font-medium ${
-              mobileTab === 'data'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600'
+              mobileTab === 'data' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
             }`}
           >
             Daten

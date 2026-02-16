@@ -1,3 +1,15 @@
+/**
+ * ZOE SOLAR ACCOUNTING OCR - FREE AI SERVICE
+ *
+ * NVIDIA NIM API Configuration
+ * Only uses NVIDIA NIM with Qwen 3 model
+ *
+ * Best Practices February 2026:
+ * - Only NVIDIA NIM API
+ * - Qwen 3 model for document OCR
+ * - TypeScript Strict Mode
+ */
+
 import type { ProviderConfig } from './types';
 
 export const OCR_PROMPT = `Extrahiere alle relevanten Daten aus diesem Rechnungsdokument.
@@ -44,44 +56,14 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
   NVIDIA: {
     enabled: true,
     baseUrl: 'https://integrate.api.nvidia.com/v1',
-    model: 'moonshotai/kimi-k2.5',
+    model: 'qwen/qwen3-30b-a3b',
     apiKey: import.meta.env.VITE_NVIDIA_API_KEY || '',
     priority: 1,
-    timeout: 30000,
+    timeout: 60000,
     maxRetries: 3,
-  },
-  SILICONFLOW: {
-    enabled: true,
-    baseUrl: 'https://api.siliconflow.cn/v1',
-    model: 'Qwen/Qwen2.5-VL-72B-Instruct',
-    apiKey: import.meta.env.VITE_SILICONFLOW_API_KEY || '',
-    priority: 2,
-    timeout: 30000,
-    maxRetries: 3,
-  },
-  MISTRAL: {
-    enabled: true,
-    baseUrl: 'https://api.mistral.ai/v1',
-    model: 'pixtral-12b-2409',
-    apiKey: import.meta.env.VITE_MISTRAL_API_KEY || '',
-    priority: 3,
-    timeout: 30000,
-    maxRetries: 2,
-  },
-  OPENCODE: {
-    enabled: true,
-    baseUrl: 'https://api.opencode.ai/v1',
-    model: 'zen/big-pickle',
-    apiKey: import.meta.env.VITE_OPENCODE_API_KEY || '',
-    priority: 4,
-    timeout: 45000,
-    maxRetries: 2,
   },
 };
 
 export const FREE_TIER_INFO: Record<string, string> = {
-  NVIDIA: 'Kimi K2.5 - Premium Quality',
-  SiliconFlow: '1M tokens/day',
-  Mistral: '1B tokens/month',
-  OpenCode: '100% FREE unlimited',
+  NVIDIA: 'NVIDIA NIM - Qwen3 30B',
 };

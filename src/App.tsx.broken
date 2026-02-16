@@ -1,0 +1,170 @@
+import { useState, useCallback } from 'react';
+import { Settings, FileText, Upload, Database } from 'lucide-react';
+import './App.css';
+import { UploadArea } from './components/UploadArea';
+import { DatabaseView } from './components/DatabaseView';
+import { SettingsView } from './components/SettingsView';
+import { DocumentRecord, AppSettings, DocumentStatus } from './types';
+
+const defaultSettings: AppSettings = {
+  id: 'default',
+  taxDefinitions: [],
+  accountDefinitions: [],
+  accountGroups: [],
+  ocrConfig: {
+    scores: {},
+    required_fields: [],
+    field_weights: {},
+    regex_patterns: {},
+    validation_rules: {
+      sum_check: true,
+      date_check: true,
+      min_confidence: 0.8,
+    },
+  },
+};
+
+export function App() {
+  const [documents, setDocuments] = useState<DocumentRecord[]>([]);
+  const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+  const [showSettings, setShowSettings] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upload' | 'documents'>('upload');
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error';
+  } | null>(null);
+
+  const handleUploadComplete = useCallback((result: any) => {
+    console.log('Upload completed:', result);
+
+    const newDoc: DocumentRecord = {
+      id: result.documentId || `doc_${Date.now()}`,
+      fileName: result.fileName || 'Unnamed Document',
+      fileType: result.fileType || 'application/pdf',
+      uploadDate: new Date().toISOString(),
+      status: DocumentStatus.PROCESSING,
+      data: result.extractedData || null,
+      previewUrl: result.previewUrl,
+    };
+
+    setDocuments((prev) => [newDoc, ...prev]);
+    setNotification({ message: `Dokument "${newDoc.fileName}" hochgeladen`, type: 'success' });
+    setActiveTab('documents');
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  const handleUploadError = useCallback((error: string) => {
+    console.error('Upload error:', error);
+    setNotification({ message: error, type: 'error' });
+    setTimeout(() => setNotification(null), 5000);
+  }, []);
+
+  const handleSaveSettings = useCallback(async (newSettings: AppSettings) => {
+    setSettings(newSettings);
+    setNotification({ message: 'Einstellungen gespeichert', type: 'success' });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  const handleViewModeChange = useCallback((mode: string) => {
+    console.log('View mode changed:', mode);
+  }, []);
+
+  const renderContent = () => {
+    if (activeTab === 'upload') {
+      return (
+        <div className="upload-section">
+          <UploadArea onUploadComplete={handleUploadComplete} onUploadError={handleUploadError} />
+        </div>
+      );
+    }
+
+    return (
+      <DatabaseView
+        documents={documents}
+        settings={settings}
+        onViewModeChange={handleViewModeChange}
+        viewMode="grid"
+      />
+    );
+  };
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div className="header-brand">
+          <FileText size={28} className="header-icon" />
+          <h1>Solar Accounting OCR</h1>
+        </div>
+
+        <nav className="header-nav">
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'upload' ? 'active' : ''}`}
+            onClick={() => setActiveTab('upload')}
+          >
+            <Upload size={18} />
+            <span>Upload</span>
+          </button>
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'documents' ? 'active' : ''}`}
+            onClick={() => setActiveTab('documents')}
+          >
+            <Database size={18} />
+            <span>Dokumente</span>
+            {documents.length > 0 && <span className="doc-badge">{documents.length}</span>}
+          </button>
+        </nav>
+
+        <button
+          type="button"
+          className="settings-btn"
+          onClick={() => setShowSettings(true)}
+          title="Einstellungen"
+        >
+          <Settings size={22} />
+        </button>
+      </header>
+
+      <main className="app-main">
+        {notification && (
+          <div className={`notification ${notification.type}`}>{notification.message}</div>
+        )}
+
+        {renderContent()}
+      </main>
+
+      <footer className="app-footer">
+        <p>ZOE Solar Accounting OCR © 2025</p>
+        <p className="footer-status">{documents.length} Dokumente | Status: Bereit</p>
+      </footer>
+
+      {showSettings && (
+        <button
+          type="button"
+          className="modal-overlay"
+          onClick={() => setShowSettings(false)}
+          aria-label="Close settings"
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
+          >
+            <SettingsView
+              settings={settings}
+              onSave={handleSaveSettings}
+              onClose={() => setShowSettings(false)}
+            />
+          </div>
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Default export for lazy loading
+export default App;

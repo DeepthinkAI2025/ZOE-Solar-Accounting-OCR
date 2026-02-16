@@ -1,18 +1,9 @@
-/**
- * NVIDIA Kimi K2.5 Provider
- * Primary provider for OCR - Best quality
- * Best Practices February 2026 - TypeScript Strict Mode
- */
-
 import type { Provider, ExtractedData } from '../types';
 import { OCR_PROMPT } from '../config';
 import { FreeAIServiceError } from '../errors';
-import { fetchWithTimeout, handleAPIError, buildOpenAIRequest } from './base';
+import { fetchWithTimeout, handleAPIError } from './base';
 import { parseOpenAICompatibleResponse } from '../parsers';
 
-/**
- * Execute OCR using NVIDIA API (Kimi K2.5)
- */
 export async function tryNVIDIA(
   provider: Provider,
   base64: string,
@@ -20,7 +11,25 @@ export async function tryNVIDIA(
 ): Promise<Partial<ExtractedData>> {
   const { config } = provider;
 
-  const requestBody = buildOpenAIRequest(config.model, OCR_PROMPT, base64, mimeType);
+  const requestBody = {
+    model: config.model,
+    messages: [
+      {
+        role: 'user',
+        content: `${OCR_PROMPT}\n\n<img src="data:${mimeType};base64,${base64}" />`,
+      },
+    ],
+    max_tokens: 16384,
+    temperature: 0.6,
+    top_p: 0.95,
+    top_k: 20,
+    presence_penalty: 0,
+    repetition_penalty: 1,
+    stream: false,
+    chat_template_kwargs: {
+      enable_thinking: true,
+    },
+  };
 
   const response = await fetchWithTimeout(
     `${config.baseUrl}/chat/completions`,

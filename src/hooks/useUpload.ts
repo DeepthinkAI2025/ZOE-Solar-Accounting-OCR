@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { DocumentRecord, ExtractedData, DocumentStatus } from '../types';
-import { analyzeDocumentWithGemini } from '../services/geminiService';
+import { analyzeDocumentFree } from '../services/freeAIService';
 import { applyAccountingRules, generateZoeInvoiceId } from '../services/ruleEngine';
 import { normalizeExtractedData } from '../services/extractedDataNormalization';
 import { detectPrivateDocument } from '../services/privateDocumentDetection';
@@ -13,11 +13,11 @@ export function useUpload() {
   const uploadFile = async (file: File): Promise<DocumentRecord> => {
     setIsProcessing(true);
     try {
-      const base64 = await file.arrayBuffer().then(b => {
+      const base64 = await file.arrayBuffer().then((b) => {
         return btoa(String.fromCharCode(...new Uint8Array(b)));
       });
 
-      const extractedRaw = await analyzeDocumentWithGemini(base64, file.type);
+      const extractedRaw = await analyzeDocumentFree(base64, file.type);
       const extracted = normalizeExtractedData(extractedRaw);
 
       const privateCheck = detectPrivateDocument(extracted);
@@ -30,7 +30,7 @@ export function useUpload() {
         status: privateCheck.isPrivate ? DocumentStatus.PRIVATE : DocumentStatus.COMPLETED,
         data: extracted,
         previewUrl: `data:${file.type};base64,${base64}`,
-        fileHash: 'placeholder-hash'
+        fileHash: 'placeholder-hash',
       };
 
       return doc;

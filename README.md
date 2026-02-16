@@ -109,22 +109,21 @@ sequenceDiagram
 
 <div align="center">
 
-| | | |
-|:---:|:---:|:---:|
-| **🤖 KI-OCR** | **🎯 SKR03** | **📊 ELSTER** |
+|                                |                         |                      |
+| :----------------------------: | :---------------------: | :------------------: |
+|         **🤖 KI-OCR**          |      **🎯 SKR03**       |    **📊 ELSTER**     |
 | Gemini 2.5 Flash + Qwen 2.5 VL | Automatische Kontierung | XML-Export für UStVA |
-| | | |
-| **💾 DATEV** | **🔐 Cloud-First** | **✅ Qualität** |
-| EXTF-Buchungsstapel | Supabase auf OCI VM | 160 Unit Tests |
+|                                |                         |                      |
+|          **💾 DATEV**          |   **🔐 Cloud-First**    |   **✅ Qualität**    |
+|      EXTF-Buchungsstapel       |   Supabase auf OCI VM   |    160 Unit Tests    |
 
 </div>
 
 ### KI-OCR Pipeline
 
-| Modell | Geschwindigkeit | Genauigkeit | Zweck |
-|--------|-----------------|-------------|-------|
-| **Google Gemini 2.5 Flash** | < 3 Sek | 99% | Primäre Extraktion |
-| **SiliconFlow Qwen 2.5 VL (72B)** | < 5 Sek | 98% | Fallback bei Timeout |
+| Modell                | Geschwindigkeit | Genauigkeit | Zweck              |
+| --------------------- | --------------- | ----------- | ------------------ |
+| **NVIDIA NIM Qwen 3** | < 3 Sek         | 99%         | Primäre Extraktion |
 
 **Unterstützte Formate:** PDF, JPG, PNG, WebP
 
@@ -152,26 +151,26 @@ sequenceDiagram
 
 ### Dependencies
 
-| Kategorie | Paket | Version |
-|-----------|-------|---------|
-| **Framework** | React | ^19.2.3 |
-| **Sprache** | TypeScript | ~5.8.2 |
-| **Styling** | Tailwind CSS | 4.1.18 |
-| **Build** | Vite | ^6.2.0 |
-| **AI SDK** | @google/genai | ^1.33.0 |
-| **Backend** | @supabase/supabase-js | ^2.89.0 |
-| **PDF Engine** | pdfjs-dist | 3.11.174 |
-| **PDF Gen** | jspdf | 2.5.1 |
-| **Tables** | jspdf-autotable | 3.8.1 |
+| Kategorie      | Paket                 | Version  |
+| -------------- | --------------------- | -------- |
+| **Framework**  | React                 | ^19.2.3  |
+| **Sprache**    | TypeScript            | ~5.8.2   |
+| **Styling**    | Tailwind CSS          | 4.1.18   |
+| **Build**      | Vite                  | ^6.2.0   |
+| **AI**         | NVIDIA NIM            | -        |
+| **Backend**    | @supabase/supabase-js | ^2.89.0  |
+| **PDF Engine** | pdfjs-dist            | 3.11.174 |
+| **PDF Gen**    | jspdf                 | 2.5.1    |
+| **Tables**     | jspdf-autotable       | 3.8.1    |
 
 ### Dev Dependencies
 
-| Kategorie | Paket | Version |
-|-----------|-------|---------|
-| **Test** | vitest | ^4.0.16 |
-| **Test Lib** | @testing-library/react | ^16.3.1 |
-| **Test DOM** | jsdom | ^27.4.0 |
-| **Types** | @types/node | ^22.14.0 |
+| Kategorie    | Paket                  | Version  |
+| ------------ | ---------------------- | -------- |
+| **Test**     | vitest                 | ^4.0.16  |
+| **Test Lib** | @testing-library/react | ^16.3.1  |
+| **Test DOM** | jsdom                  | ^27.4.0  |
+| **Types**    | @types/node            | ^22.14.0 |
 
 </div>
 
@@ -254,14 +253,14 @@ src/
 
 ## 📤 Export-Formate
 
-| Format | Beschreibung | Datei |
-|--------|-------------|-------|
-| **ELSTER XML** | UStVA für Finanzamt | `elster_ustva_{period}.xml` |
-| **DATEV EXTF** | Buchungsstapel | `datev_buchungsstapel.csv` |
-| **CSV** | Semikolon, UTF-8, 32 Spalten | `zoe_belege_{date}.csv` |
-| **SQL** | Vollständiges Schema | `zoe_backup_{date}.sql` |
-| **PDF** | Berichte: EÜR, UStVA | `zoe_bericht_{type}.pdf` |
-| **JSON** | Backup | `zoe_backup_{date}.json` |
+| Format         | Beschreibung                 | Datei                       |
+| -------------- | ---------------------------- | --------------------------- |
+| **ELSTER XML** | UStVA für Finanzamt          | `elster_ustva_{period}.xml` |
+| **DATEV EXTF** | Buchungsstapel               | `datev_buchungsstapel.csv`  |
+| **CSV**        | Semikolon, UTF-8, 32 Spalten | `zoe_belege_{date}.csv`     |
+| **SQL**        | Vollständiges Schema         | `zoe_backup_{date}.sql`     |
+| **PDF**        | Berichte: EÜR, UStVA         | `zoe_bericht_{type}.pdf`    |
+| **JSON**       | Backup                       | `zoe_backup_{date}.json`    |
 
 ### ELSTER XML Struktur
 
@@ -350,12 +349,7 @@ interface DocumentRecord {
   duplicateReason?: string;
 }
 
-type DocumentStatus =
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'duplicate'
-  | 'error';
+type DocumentStatus = 'pending' | 'processing' | 'completed' | 'duplicate' | 'error';
 ```
 
 ---
@@ -364,23 +358,23 @@ type DocumentStatus =
 
 ### Services
 
-| Service | Funktion | Export |
-|---------|----------|--------|
-| `geminiService.ts` | OCR mit Gemini 2.5 Flash | `analyzeDocument(file)` |
-| `fallbackService.ts` | SiliconFlow Qwen Fallback | `analyzeDocument(file)` |
-| `supabaseService.ts` | CRUD + Auth | `getAllDocuments()`, `saveDocument()` |
-| `ruleEngine.ts` | SKR03 Kontierung | `applyRules(data, vendor)` |
-| `elsterExport.ts` | ELSTER XML | `generateUstva(docs, settings)` |
-| `datevExport.ts` | DATEV EXTF | `generateBuchungsstapel(docs)` |
-| `backupService.ts` | Backup/Restore | `createBackup()`, `restoreFromBackup()` |
+| Service              | Funktion                  | Export                                  |
+| -------------------- | ------------------------- | --------------------------------------- |
+| `geminiService.ts`   | OCR mit Gemini 2.5 Flash  | `analyzeDocument(file)`                 |
+| `fallbackService.ts` | SiliconFlow Qwen Fallback | `analyzeDocument(file)`                 |
+| `supabaseService.ts` | CRUD + Auth               | `getAllDocuments()`, `saveDocument()`   |
+| `ruleEngine.ts`      | SKR03 Kontierung          | `applyRules(data, vendor)`              |
+| `elsterExport.ts`    | ELSTER XML                | `generateUstva(docs, settings)`         |
+| `datevExport.ts`     | DATEV EXTF                | `generateBuchungsstapel(docs)`          |
+| `backupService.ts`   | Backup/Restore            | `createBackup()`, `restoreFromBackup()` |
 
 ### React Hooks
 
-| Hook | State | Funktion |
-|------|-------|----------|
-| `useDocuments()` | `documents`, `loading` | Document CRUD + Pagination |
-| `useSettings()` | `settings`, `updateSettings` | App-Einstellungen |
-| `useUpload()` | `uploading`, `progress` | Datei-Upload + OCR |
+| Hook             | State                        | Funktion                   |
+| ---------------- | ---------------------------- | -------------------------- |
+| `useDocuments()` | `documents`, `loading`       | Document CRUD + Pagination |
+| `useSettings()`  | `settings`, `updateSettings` | App-Einstellungen          |
+| `useUpload()`    | `uploading`, `progress`      | Datei-Upload + OCR         |
 
 ### Custom Components
 
@@ -420,21 +414,21 @@ type DocumentStatus =
 
 ## 🧪 Testing
 
-| Framework | vitest ^4.0.16 |
-|-----------|----------------|
-| **Environment** | jsdom |
-| **Test-Count** | 160 Unit Tests |
-| **Coverage** | 12 Test-Dateien |
+| Framework       | vitest ^4.0.16  |
+| --------------- | --------------- |
+| **Environment** | jsdom           |
+| **Test-Count**  | 160 Unit Tests  |
+| **Coverage**    | 12 Test-Dateien |
 
 ### Test-Dateien
 
-| Test | Was getestet wird |
-|------|-------------------|
-| `ruleEngine.test.ts` | SKR03 Kontierung, Vendor Rules |
-| `exportPreflight.test.ts` | Export-Validierung |
-| `extractedDataNormalization.test.ts` | Daten-Normalisierung |
-| `datevExport.test.ts` | DATEV Format-Generierung |
-| `elsterExport.test.ts` | ELSTER XML-Generierung |
+| Test                                 | Was getestet wird              |
+| ------------------------------------ | ------------------------------ |
+| `ruleEngine.test.ts`                 | SKR03 Kontierung, Vendor Rules |
+| `exportPreflight.test.ts`            | Export-Validierung             |
+| `extractedDataNormalization.test.ts` | Daten-Normalisierung           |
+| `datevExport.test.ts`                | DATEV Format-Generierung       |
+| `elsterExport.test.ts`               | ELSTER XML-Generierung         |
 
 ### Test-Kommandos
 
@@ -458,31 +452,31 @@ npm run check
 
 ### Abgeschlossen
 
-| Epic | Feature | Status |
-|------|---------|--------|
-| **A: OCR & Extraktion** | PDF Upload & Preview | ✅ |
-| | Gemini OCR Integration | ✅ |
-| | Fallback Pipeline (SiliconFlow) | ✅ |
-| **B: Kontierung & Regeln** | SKR03 Mapping | ✅ |
-| | Steuerkategorien (6 Kategorien) | ✅ |
-| | Vendor Rules Learning | ✅ |
-| **C: Qualität & Duplikate** | Duplikat-Erkennung V2 | ✅ |
-| | Validierung Engine | ✅ |
-| | Private Document Detection | ✅ |
-| **D: Export** | ELSTER XML | ✅ |
-| | DATEV EXTF | ✅ |
-| | CSV/SQL/PDF | ✅ |
-| **E: Backend & Sync** | Supabase Integration | ✅ |
-| | Auth UI | ✅ |
-| | Backup/Restore | ✅ |
+| Epic                        | Feature                         | Status |
+| --------------------------- | ------------------------------- | ------ |
+| **A: OCR & Extraktion**     | PDF Upload & Preview            | ✅     |
+|                             | Gemini OCR Integration          | ✅     |
+|                             | Fallback Pipeline (SiliconFlow) | ✅     |
+| **B: Kontierung & Regeln**  | SKR03 Mapping                   | ✅     |
+|                             | Steuerkategorien (6 Kategorien) | ✅     |
+|                             | Vendor Rules Learning           | ✅     |
+| **C: Qualität & Duplikate** | Duplikat-Erkennung V2           | ✅     |
+|                             | Validierung Engine              | ✅     |
+|                             | Private Document Detection      | ✅     |
+| **D: Export**               | ELSTER XML                      | ✅     |
+|                             | DATEV EXTF                      | ✅     |
+|                             | CSV/SQL/PDF                     | ✅     |
+| **E: Backend & Sync**       | Supabase Integration            | ✅     |
+|                             | Auth UI                         | ✅     |
+|                             | Backup/Restore                  | ✅     |
 
 ### Geplant
 
-| Feature | Priorität |
-|---------|-----------|
-| KI-gestützte Korrekturvorschläge | Hoch |
-| Mobile App (React Native) | Mittel |
-| Echtzeit Kollaboration | Niedrig |
+| Feature                          | Priorität |
+| -------------------------------- | --------- |
+| KI-gestützte Korrekturvorschläge | Hoch      |
+| Mobile App (React Native)        | Mittel    |
+| Echtzeit Kollaboration           | Niedrig   |
 
 ---
 
@@ -492,7 +486,7 @@ npm run check
 
 **© 2025 ZOE Solar GmbH & Co. KG**
 
-*Proprietäre Software - Alle Rechte vorbehalten*
+_Proprietäre Software - Alle Rechte vorbehalten_
 
 Die Nutzung ist ausschließlich für ZOE Solar gestattet.
 
@@ -502,6 +496,6 @@ Die Nutzung ist ausschließlich für ZOE Solar gestattet.
 
 ---
 
-*Made with for the Solar Industry* ☀️
+_Made with for the Solar Industry_ ☀️
 
 </div>

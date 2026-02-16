@@ -6,8 +6,6 @@
 import path from 'path';
 import { defineConfig, ConfigEnv, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-
 /**
  * Service Worker Plugin for Vite
  * Builds and injects service worker during production builds
@@ -44,8 +42,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     },
     plugins: [
       // React with Compiler for automatic memoization
-      react({}),
-      tailwindcss(),
+      react(),
       // Service worker builder for production
       serviceWorkerPlugin(),
     ],
@@ -98,9 +95,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
             // Supabase
             supabase: ['@supabase/supabase-js'],
-
-            // AI providers
-            ai: ['@google/genai'],
 
             // UI utilities
             ui: ['react-hot-toast', 'uuid'],

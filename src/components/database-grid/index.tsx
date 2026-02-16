@@ -16,7 +16,7 @@ import { BulkActions } from './BulkActions';
 
 // Services
 import { rateLimitWrapper, exportRateLimiter } from '../../services/rateLimiter';
-import { generatePDFReport, generateCSVExport } from '../../services/exportService';
+import { generatePdfReport, generateCSVExport } from '../../services/exportService';
 import { toast } from 'react-hot-toast';
 
 interface DatabaseGridProps {
@@ -39,10 +39,14 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
   // Handlers
   const handleExport = async (doc: DocumentRecord) => {
     try {
-      await rateLimitWrapper('export', async () => {
-        await generatePDFReport([doc]);
-        toast.success('PDF Export erfolgreich');
-      }, exportRateLimiter);
+      await rateLimitWrapper(
+        'export',
+        async () => {
+          await generatePdfReport([doc]);
+          toast.success('PDF Export erfolgreich');
+        },
+        exportRateLimiter
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -58,11 +62,15 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
   // Bulk Actions
   const handleBulkExport = async () => {
     try {
-      const selectedDocs = documents.filter(d => table.selectedIds.has(d.id));
-      await rateLimitWrapper('export', async () => {
-        await generatePDFReport(selectedDocs);
-        toast.success(`${selectedDocs.length} PDFs exportiert`);
-      }, exportRateLimiter);
+      const selectedDocs = documents.filter((d) => table.selectedIds.has(d.id));
+      await rateLimitWrapper(
+        'export',
+        async () => {
+          await generatePdfReport(selectedDocs);
+          toast.success(`${selectedDocs.length} PDFs exportiert`);
+        },
+        exportRateLimiter
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -70,11 +78,15 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
 
   const handleBulkExportCSV = async () => {
     try {
-      const selectedDocs = documents.filter(d => table.selectedIds.has(d.id));
-      await rateLimitWrapper('export', async () => {
-        await generateCSVExport(selectedDocs);
-        toast.success('CSV Export erfolgreich');
-      }, exportRateLimiter);
+      const selectedDocs = documents.filter((d) => table.selectedIds.has(d.id));
+      await rateLimitWrapper(
+        'export',
+        async () => {
+          await generateCSVExport(selectedDocs);
+          toast.success('CSV Export erfolgreich');
+        },
+        exportRateLimiter
+      );
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -122,8 +134,18 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
       {/* Empty State */}
       {table.sortedDocuments.length === 0 && (
         <div className="p-8 text-center text-text-muted">
-          <svg className="w-16 h-16 mx-auto mb-2 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          <svg
+            className="w-16 h-16 mx-auto mb-2 opacity-30"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
           </svg>
           <p>Keine Dokumente gefunden</p>
         </div>
@@ -145,14 +167,38 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
                     />
                   </th>
                   <th className="p-2 text-xs font-semibold text-gray-600">ZOE-ID</th>
-                  <th className="p-2 text-xs font-semibold text-gray-600 cursor-pointer" onClick={() => table.sortBy('uploadDate' as any)}>
-                    Datum {table.sortField === 'uploadDate' ? (table.sortDirection === 'asc' ? '↑' : '↓') : ''}
+                  <th
+                    className="p-2 text-xs font-semibold text-gray-600 cursor-pointer"
+                    onClick={() => table.sortBy('uploadDate' as any)}
+                  >
+                    Datum{' '}
+                    {table.sortField === 'uploadDate'
+                      ? table.sortDirection === 'asc'
+                        ? '↑'
+                        : '↓'
+                      : ''}
                   </th>
-                  <th className="p-2 text-xs font-semibold text-gray-600 cursor-pointer" onClick={() => table.sortBy('lieferantName' as any)}>
-                    Lieferant {table.sortField === 'lieferantName' ? (table.sortDirection === 'asc' ? '↑' : '↓') : ''}
+                  <th
+                    className="p-2 text-xs font-semibold text-gray-600 cursor-pointer"
+                    onClick={() => table.sortBy('lieferantName' as any)}
+                  >
+                    Lieferant{' '}
+                    {table.sortField === 'lieferantName'
+                      ? table.sortDirection === 'asc'
+                        ? '↑'
+                        : '↓'
+                      : ''}
                   </th>
-                  <th className="p-2 text-xs font-semibold text-gray-600 cursor-pointer" onClick={() => table.sortBy('amountBrutto' as any)}>
-                    Betrag {table.sortField === 'amountBrutto' ? (table.sortDirection === 'asc' ? '↑' : '↓') : ''}
+                  <th
+                    className="p-2 text-xs font-semibold text-gray-600 cursor-pointer"
+                    onClick={() => table.sortBy('amountBrutto' as any)}
+                  >
+                    Betrag{' '}
+                    {table.sortField === 'amountBrutto'
+                      ? table.sortDirection === 'asc'
+                        ? '↑'
+                        : '↓'
+                      : ''}
                   </th>
                   <th className="p-2 text-xs font-semibold text-gray-600">Konto</th>
                   <th className="p-2 text-xs font-semibold text-gray-600">Status</th>
@@ -160,7 +206,7 @@ export const DatabaseGrid: React.FC<DatabaseGridProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {table.paginatedDocuments.map(doc => (
+                {table.paginatedDocuments.map((doc) => (
                   <TableRow
                     key={doc.id}
                     document={doc}

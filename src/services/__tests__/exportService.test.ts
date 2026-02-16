@@ -4,7 +4,7 @@ import {
   exportToSQL,
   exportToPDF,
   generateCSVExport,
-  generatePDFReport,
+  generatePdfReport,
 } from '../exportService';
 import { describe, expect, it } from 'vitest';
 
@@ -77,8 +77,8 @@ describe('exportService.ts', () => {
       expect(result.filename).toBe('export.csv');
     });
 
-    it('generatePDFReport should be alias for exportToPDF', async () => {
-      const result = await generatePDFReport(mockDocuments, mockSettings);
+    it('generatePdfReport should be alias for exportToPDF', async () => {
+      const result = await generatePdfReport(mockDocuments, mockSettings);
 
       expect(result.filename).toBe('export.pdf');
     });
