@@ -60,8 +60,8 @@ function mapToBuchungssatz(doc: DocumentRecord, config: DatevConfig): DatevBuchu
   const data = doc.data;
   const steuerkategorie = data?.steuerkategorie || data?.steuerKategorie || '19%';
 
-  let betrag = data?.bruttoBetrag || data?.nettoBetrag || 0;
-  let steuerBetrag = (data?.mwstBetrag19 || 0) + (data?.mwstBetrag7 || 0);
+  const betrag = data?.bruttoBetrag || data?.nettoBetrag || 0;
+  const steuerBetrag = (data?.mwstBetrag19 || 0) + (data?.mwstBetrag7 || 0);
 
   const sollKonto = data?.sollKonto || data?.konto_skr03 || data?.kontierungskonto || '1400';
   const habenKonto = data?.habenKonto || '1600';
