@@ -6,9 +6,9 @@ ZOE Solar Accounting OCR uses **NVIDIA NIM (NVIDIA Inference Microservices)** fo
 
 ## Provider
 
-| Provider   | Model      | Endpoint                              |
-| ---------- | ---------- | ------------------------------------- |
-| NVIDIA NIM | Qwen 3 30B | `https://integrate.api.nvidia.com/v1` |
+| Provider   | Model                    | Endpoint                              |
+| ---------- | ------------------------ | ------------------------------------- |
+| NVIDIA NIM | Qwen 3 Next 80B Instruct | `https://integrate.api.nvidia.com/v1` |
 
 ## Configuration
 
@@ -42,9 +42,9 @@ Extracted Data (JSON)
 
 ## Model Details
 
-| Model              | Parameters | Context | Use Case     |
-| ------------------ | ---------- | ------- | ------------ |
-| qwen/qwen3-30b-a3b | 30B        | 32K     | Document OCR |
+| Model                            | Parameters | Context | Use Case     |
+| -------------------------------- | ---------- | ------- | ------------ |
+| qwen/qwen3-next-80b-a3b-instruct | 80B        | 32K     | Document OCR |
 
 ## Features
 

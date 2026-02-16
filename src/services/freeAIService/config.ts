@@ -56,7 +56,7 @@ export const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
   NVIDIA: {
     enabled: true,
     baseUrl: 'https://integrate.api.nvidia.com/v1',
-    model: 'qwen/qwen3-30b-a3b',
+    model: 'qwen/qwen3-next-80b-a3b-instruct',
     apiKey: import.meta.env.VITE_NVIDIA_API_KEY || '',
     priority: 1,
     timeout: 60000,

@@ -16,7 +16,7 @@ VITE_NVIDIA_API_KEY=your-nvidia-api-key
 
 ### Verwendetes Modell
 
-- **Modell**: `qwen/qwen3-30b-a3b`
+- **Modell**: `qwen/qwen3-next-80b-a3b-instruct`
 - **Provider**: NVIDIA NIM (integrate.api.nvidia.com)
 - **Qualität**: Premium OCR für deutsche Rechnungen
 
